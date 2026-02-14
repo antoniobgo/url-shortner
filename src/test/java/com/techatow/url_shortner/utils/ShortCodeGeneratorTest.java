@@ -18,9 +18,8 @@ class ShortCodeGeneratorTest {
     @Test
     void generateRandomCode_shouldContainOnlyValidCharacters() {
         String code = ShortCodeGenerator.generateRandomCode();
-        String validChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-        assertThat(code).matches("[" + validChars + "]{6}");
+        assertThat(code).matches("^[0-9A-Za-z]{6}$");
     }
 
     @RepeatedTest(100)
