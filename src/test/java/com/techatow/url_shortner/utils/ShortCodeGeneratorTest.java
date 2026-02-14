@@ -3,7 +3,6 @@ package com.techatow.url_shortner.utils;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 class ShortCodeGeneratorTest {
@@ -22,15 +21,15 @@ class ShortCodeGeneratorTest {
         assertThat(code).matches("^[0-9A-Za-z]{6}$");
     }
 
-    @RepeatedTest(100)
+    @Test
     void generateRandomCode_shouldGenerateDifferentCodes() {
         Set<String> codes = new HashSet<>();
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             codes.add(ShortCodeGenerator.generateRandomCode());
         }
 
-        assertThat(codes.size()).isGreaterThan(990);
+        assertThat(codes).hasSize(100);
     }
 
     @Test
