@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 import com.techatow.url_shortner.services.ShortenedUrlService;
 
@@ -19,13 +18,10 @@ public class RedirectController {
     public RedirectView redirect(@PathVariable String shortCode) {
         String originalUrl = urlService.resolveShortCode(shortCode);
 
-        if (originalUrl == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "URL não encontrada");
-        }
-
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(originalUrl);
         redirectView.setStatusCode(HttpStatus.FOUND);
+
         return redirectView;
     }
 }
