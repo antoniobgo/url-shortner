@@ -33,9 +33,12 @@ public class ShortenedUrl {
 
     private LocalDateTime expiresAt;
 
-    public ShortenedUrl() {}
+    public ShortenedUrl() {
+        expiresAt = LocalDateTime.now().plusDays(7);
+    }
 
     public ShortenedUrl(String shortCode, String originalUrl) {
+        this();
         this.shortCode = shortCode;
         this.originalUrl = originalUrl;
     }
@@ -95,6 +98,10 @@ public class ShortenedUrl {
 
     public void setExpiresAt(LocalDateTime expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    public boolean isExpired() {
+        return expiresAt != null && LocalDateTime.now().isAfter(expiresAt);
     }
 
 

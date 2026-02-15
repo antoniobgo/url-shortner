@@ -25,7 +25,7 @@ public class RedirectController {
 
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(originalUrl);
-        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY);
+        redirectView.setStatusCode(HttpStatus.FOUND);
         return redirectView;
     }
 }

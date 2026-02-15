@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.techatow.url_shortner.dtos.ShortenUrlResponse;
 import com.techatow.url_shortner.entities.ShortenedUrl;
+import com.techatow.url_shortner.exceptions.ShortCodeGenerationException;
+import com.techatow.url_shortner.exceptions.UrlExpiredException;
+import com.techatow.url_shortner.exceptions.UrlNotFoundException;
 import com.techatow.url_shortner.repositories.ShortenedUrlRepository;
 import com.techatow.url_shortner.utils.ShortCodeGenerator;
 import com.techatow.url_shortner.utils.UrlValidator;
@@ -36,12 +39,18 @@ public class ShortenedUrlService {
 
     @Transactional
     public String resolveShortCode(String shortCode) {
-        return urlRepository.findByShortCode(shortCode).map(url -> {
-            url.setClicks(url.getClicks() + 1);
-            url.setLastAccessedAt(LocalDateTime.now());
-            urlRepository.save(url);
-            return url.getOriginalUrl();
-        }).orElse(null);
+        ShortenedUrl url = urlRepository.findByShortCode(shortCode).orElseThrow(
+                () -> new UrlNotFoundException("Short code não encontrado: " + shortCode));
+
+        if (url.isExpired()) {
+            throw new UrlExpiredException("URL expirada");
+        }
+
+        url.setClicks(url.getClicks() + 1);
+        url.setLastAccessedAt(LocalDateTime.now());
+        urlRepository.save(url);
+
+        return url.getOriginalUrl();
     }
 
     private String generateUniqueCode() {
@@ -53,8 +62,7 @@ public class ShortenedUrlService {
                 return code;
             }
         }
-        // melhorar excessao
-        throw new IllegalStateException(
+        throw new ShortCodeGenerationException(
                 "Falha ao gerar código único após " + maxAttempts + " tentativas");
     }
 }
