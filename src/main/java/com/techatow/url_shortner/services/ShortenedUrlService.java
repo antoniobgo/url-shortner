@@ -78,6 +78,7 @@ public class ShortenedUrlService {
                 "Falha ao gerar código único após " + maxAttempts + " tentativas");
     }
 
+    @Transactional(readOnly = true)
     public UrlStatsResponse getStats(String shortCode) {
         ShortenedUrl shortenedUrl = urlRepository.findByShortCode(shortCode).orElseThrow(
                 () -> new UrlNotFoundException("Url associada ao short code não encontrada"));
@@ -88,11 +89,20 @@ public class ShortenedUrlService {
                 shortenedUrl.isExpired());
     }
 
+    @Transactional(readOnly = true)
     public Page<UrlStatsResponse> listUrls(Pageable pageable) {
         return urlRepository.findAll(pageable)
                 .map(url -> new UrlStatsResponse(url.getId(), url.getShortCode(),
                         url.getOriginalUrl(), baseUrl + url.getShortCode(), url.getClicks(),
                         url.getCreatedAt(), url.getLastAccessedAt(), url.getExpiresAt(),
                         url.isExpired()));
+    }
+
+    @Transactional
+    public void deleteUrl(String shortCode) {
+        ShortenedUrl url = urlRepository.findByShortCode(shortCode).orElseThrow(
+                () -> new UrlNotFoundException("Short code não encontrado: " + shortCode));
+
+        urlRepository.delete(url);
     }
 }
