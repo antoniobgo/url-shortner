@@ -1,6 +1,7 @@
 package com.techatow.url_shortner.services;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,14 @@ public class ShortenedUrlService {
     @Transactional
     public ShortenUrlResponse shortenUrl(String url) {
         String normalizedUrl = UrlValidator.normalizeUrl(url);
+
+        Optional<ShortenedUrl> optionalShortenedUrl =
+                urlRepository.findByOriginalUrl(normalizedUrl);
+        if (optionalShortenedUrl.isPresent()) {
+            ShortenedUrl shortenedUrl = optionalShortenedUrl.get();
+            return new ShortenUrlResponse(shortenedUrl.getShortCode(),
+                    shortenedUrl.getOriginalUrl(), shortenedUrl.getShortCode());
+        }
 
         final String shortCode = generateUniqueCode();
         ShortenedUrl shortenedUrl = new ShortenedUrl(shortCode, normalizedUrl);
