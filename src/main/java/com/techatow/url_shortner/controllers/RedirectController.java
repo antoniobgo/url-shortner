@@ -24,4 +24,12 @@ public class RedirectController {
 
         return redirectView;
     }
+
+    // TODO: criar método que pegue estatisticas
+    // @GetMapping("/api/stats/{shortCode}")
+    // public ResponseEntity<UrlStatsResponse> getStats(@PathVariable String shortCode) {
+    // ShortenedUrl url = urlService.getStats(shortCode);
+    // return ResponseEntity.ok(new UrlStatsResponse(url.getShortCode(), url.getOriginalUrl(),
+    // url.getClicks(), url.getCreatedAt(), url.getExpiresAt()));
+    // }
 }

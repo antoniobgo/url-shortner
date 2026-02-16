@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 // todo: fazer testes com dominios proibidos
+// todo: pensar sobre se portas
 class UrlValidatorTest {
 
     @Test
