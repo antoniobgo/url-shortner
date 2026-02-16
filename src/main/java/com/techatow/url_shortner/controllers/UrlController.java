@@ -3,6 +3,7 @@ package com.techatow.url_shortner.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,8 +41,7 @@ public class UrlController {
 
     @GetMapping
     public ResponseEntity<Page<UrlStatsResponse>> listUrls(@PageableDefault(size = 20,
-            sort = "createdAt",
-            direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+            sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
 
         Page<UrlStatsResponse> urls = urlService.listUrls(pageable);
         return ResponseEntity.ok(urls);
