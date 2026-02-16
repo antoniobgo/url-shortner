@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+// todo: fazer testes com dominios proibidos
 class UrlValidatorTest {
 
     @Test
@@ -46,9 +47,9 @@ class UrlValidatorTest {
 
     @Test
     void normalizeUrl_shouldAcceptUrlWithPort() {
-        String result = UrlValidator.normalizeUrl("localhost:8080");
+        String result = UrlValidator.normalizeUrl("globo.com:8080");
 
-        assertThat(result).isEqualTo("https://localhost:8080");
+        assertThat(result).isEqualTo("https://globo.com:8080");
     }
 
     @Test
