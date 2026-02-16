@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.techatow.url_shortner.dtos.ShortenUrlResponse;
+import com.techatow.url_shortner.dtos.UrlStatsResponse;
 import com.techatow.url_shortner.entities.ShortenedUrl;
 import com.techatow.url_shortner.exceptions.ShortCodeGenerationException;
 import com.techatow.url_shortner.exceptions.UrlExpiredException;
@@ -73,5 +74,12 @@ public class ShortenedUrlService {
         }
         throw new ShortCodeGenerationException(
                 "Falha ao gerar código único após " + maxAttempts + " tentativas");
+    }
+
+    public UrlStatsResponse getStats(String shortCode) {
+        ShortenedUrl shortenedUrl = urlRepository.findByShortCode(shortCode).orElseThrow(
+                () -> new UrlNotFoundException("Url associada ao short code não encontrada"));
+        return new UrlStatsResponse(shortenedUrl.getShortCode(), shortenedUrl.getOriginalUrl(),
+                shortenedUrl.getClicks(), shortenedUrl.getCreatedAt(), shortenedUrl.getExpiresAt());
     }
 }
