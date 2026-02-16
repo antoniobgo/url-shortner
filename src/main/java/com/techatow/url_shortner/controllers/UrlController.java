@@ -1,6 +1,9 @@
 package com.techatow.url_shortner.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +36,15 @@ public class UrlController {
     public ResponseEntity<UrlStatsResponse> getStats(@PathVariable String shortCode) {
         UrlStatsResponse urlResponseEntity = urlService.getStats(shortCode);
         return ResponseEntity.ok(urlResponseEntity);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<UrlStatsResponse>> listUrls(@PageableDefault(size = 20,
+            sort = "createdAt",
+            direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+
+        Page<UrlStatsResponse> urls = urlService.listUrls(pageable);
+        return ResponseEntity.ok(urls);
     }
 
 
