@@ -8,8 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.techatow.url_shortner.dtos.ShortenUrlResponse;
-import com.techatow.url_shortner.dtos.UrlStatsResponse;
+import com.techatow.url_shortner.dtos.UrlDetailsResponse;
 import com.techatow.url_shortner.entities.ShortenedUrl;
 import com.techatow.url_shortner.exceptions.ShortCodeGenerationException;
 import com.techatow.url_shortner.exceptions.UrlExpiredException;
@@ -28,23 +27,29 @@ public class ShortenedUrlService {
     private String baseUrl;
 
     @Transactional
-    public ShortenUrlResponse shortenUrl(String url) {
+    public UrlDetailsResponse shortenUrl(String url) {
         String normalizedUrl = UrlValidator.normalizeUrl(url);
 
         Optional<ShortenedUrl> optionalShortenedUrl =
                 urlRepository.findByOriginalUrl(normalizedUrl);
         if (optionalShortenedUrl.isPresent()) {
             ShortenedUrl shortenedUrl = optionalShortenedUrl.get();
-            return new ShortenUrlResponse(shortenedUrl.getShortCode(),
-                    shortenedUrl.getOriginalUrl(), baseUrl + shortenedUrl.getShortCode());
+            return new UrlDetailsResponse(shortenedUrl.getId(), shortenedUrl.getShortCode(),
+                    shortenedUrl.getOriginalUrl(), baseUrl + shortenedUrl.getShortCode(),
+                    shortenedUrl.getClicks(), shortenedUrl.getCreatedAt(),
+                    shortenedUrl.getLastAccessedAt(), shortenedUrl.getExpiresAt(),
+                    shortenedUrl.isExpired());
         }
 
         final String shortCode = generateUniqueCode();
         ShortenedUrl shortenedUrl = new ShortenedUrl(shortCode, normalizedUrl);
         urlRepository.save(shortenedUrl);
 
-        return new ShortenUrlResponse(shortenedUrl.getShortCode(), shortenedUrl.getOriginalUrl(),
-                baseUrl + shortCode);
+        return new UrlDetailsResponse(shortenedUrl.getId(), shortenedUrl.getShortCode(),
+                shortenedUrl.getOriginalUrl(), baseUrl + shortenedUrl.getShortCode(),
+                shortenedUrl.getClicks(), shortenedUrl.getCreatedAt(),
+                shortenedUrl.getLastAccessedAt(), shortenedUrl.getExpiresAt(),
+                shortenedUrl.isExpired());
     }
 
     @Transactional
@@ -77,10 +82,10 @@ public class ShortenedUrlService {
     }
 
     @Transactional(readOnly = true)
-    public UrlStatsResponse getStats(String shortCode) {
+    public UrlDetailsResponse getStats(String shortCode) {
         ShortenedUrl shortenedUrl = urlRepository.findByShortCode(shortCode).orElseThrow(
                 () -> new UrlNotFoundException("Url associada ao short code não encontrada"));
-        return new UrlStatsResponse(shortenedUrl.getId(), shortenedUrl.getShortCode(),
+        return new UrlDetailsResponse(shortenedUrl.getId(), shortenedUrl.getShortCode(),
                 shortenedUrl.getOriginalUrl(), baseUrl + shortenedUrl.getShortCode(),
                 shortenedUrl.getClicks(), shortenedUrl.getCreatedAt(),
                 shortenedUrl.getLastAccessedAt(), shortenedUrl.getExpiresAt(),
@@ -88,9 +93,9 @@ public class ShortenedUrlService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UrlStatsResponse> listUrls(Pageable pageable) {
+    public Page<UrlDetailsResponse> listUrls(Pageable pageable) {
         return urlRepository.findAll(pageable)
-                .map(url -> new UrlStatsResponse(url.getId(), url.getShortCode(),
+                .map(url -> new UrlDetailsResponse(url.getId(), url.getShortCode(),
                         url.getOriginalUrl(), baseUrl + url.getShortCode(), url.getClicks(),
                         url.getCreatedAt(), url.getLastAccessedAt(), url.getExpiresAt(),
                         url.isExpired()));
