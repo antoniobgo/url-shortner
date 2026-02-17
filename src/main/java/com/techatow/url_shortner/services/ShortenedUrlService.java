@@ -2,7 +2,6 @@ package com.techatow.url_shortner.services;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +19,11 @@ import com.techatow.url_shortner.utils.UrlValidator;
 @Service
 public class ShortenedUrlService {
 
-    @Autowired
-    private ShortenedUrlRepository urlRepository;
+    private final ShortenedUrlRepository urlRepository;
+
+    public ShortenedUrlService(ShortenedUrlRepository urlRepository) {
+        this.urlRepository = urlRepository;
+    }
 
     @Value("${app.base-url:http://localhost:8080/}")
     private String baseUrl;

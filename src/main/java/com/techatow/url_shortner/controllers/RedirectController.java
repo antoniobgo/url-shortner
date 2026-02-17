@@ -1,6 +1,5 @@
 package com.techatow.url_shortner.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,8 +10,11 @@ import com.techatow.url_shortner.services.ShortenedUrlService;
 @RestController
 public class RedirectController {
 
-    @Autowired
-    private ShortenedUrlService urlService;
+    private final ShortenedUrlService urlService;
+
+    public RedirectController(ShortenedUrlService urlService) {
+        this.urlService = urlService;
+    }
 
     @GetMapping("/{shortCode}")
     public RedirectView redirect(@PathVariable String shortCode) {

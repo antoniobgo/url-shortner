@@ -1,7 +1,6 @@
 package com.techatow.url_shortner.controllers;
 
 import java.net.URI;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -24,8 +23,11 @@ import jakarta.validation.Valid;
 @RequestMapping(path = "/api/urls")
 public class UrlController {
 
-    @Autowired
-    private ShortenedUrlService urlService;
+    private final ShortenedUrlService urlService;
+
+    public UrlController(ShortenedUrlService urlService) {
+        this.urlService = urlService;
+    }
 
     @PostMapping
     public ResponseEntity<UrlDetailsResponse> shortenUrl(
