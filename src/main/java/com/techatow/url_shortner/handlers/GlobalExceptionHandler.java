@@ -1,10 +1,16 @@
 package com.techatow.url_shortner.handlers;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.techatow.url_shortner.dtos.CustomErrorResponse;
@@ -17,10 +23,24 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CustomErrorResponse> handleValidationExceptions(
+            MethodArgumentNotValidException ex, HttpServletRequest request) {
+
+        Map<String, List<String>> errors = ex.getBindingResult().getAllErrors().stream()
+                .collect(Collectors.groupingBy(error -> ((FieldError) error).getField(),
+                        Collectors.mapping(DefaultMessageSourceResolvable::getDefaultMessage,
+                                Collectors.toList())));
+
+        CustomErrorResponse error = new CustomErrorResponse(Instant.now(),
+                HttpStatus.BAD_REQUEST.value(), errors, request.getRequestURI());
+        return ResponseEntity.badRequest().body(error);
+    }
+
     @ExceptionHandler(ShortCodeGenerationException.class)
     public ResponseEntity<CustomErrorResponse> handleShortCodeGenerationException(
             ShortCodeGenerationException e, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
         return buildErrorResponse(e, status, request);
     }
 

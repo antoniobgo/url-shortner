@@ -36,17 +36,15 @@ public class ShortenedUrlService {
         if (optionalShortenedUrl.isPresent()) {
             ShortenedUrl shortenedUrl = optionalShortenedUrl.get();
             return new ShortenUrlResponse(shortenedUrl.getShortCode(),
-                    shortenedUrl.getOriginalUrl(), shortenedUrl.getShortCode());
+                    shortenedUrl.getOriginalUrl(), baseUrl + shortenedUrl.getShortCode());
         }
 
         final String shortCode = generateUniqueCode();
         ShortenedUrl shortenedUrl = new ShortenedUrl(shortCode, normalizedUrl);
         urlRepository.save(shortenedUrl);
 
-        final String shortUrl = baseUrl + shortCode;
-
         return new ShortenUrlResponse(shortenedUrl.getShortCode(), shortenedUrl.getOriginalUrl(),
-                shortUrl);
+                baseUrl + shortCode);
     }
 
     @Transactional
