@@ -1,4 +1,4 @@
-package com.techatow.url_shortner.handlers;
+package com.techatow.url_shortner.exceptions.handlers;
 
 import java.time.Instant;
 import java.util.List;

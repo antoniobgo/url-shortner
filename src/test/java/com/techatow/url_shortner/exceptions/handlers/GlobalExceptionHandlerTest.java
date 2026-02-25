@@ -1,4 +1,4 @@
-package com.techatow.url_shortner.handlers;
+package com.techatow.url_shortner.exceptions.handlers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
